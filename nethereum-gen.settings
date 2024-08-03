@@ -1,0 +1,7 @@
+{
+    "projectName": "ZKiller.Contracts",
+    "namespace": "ZKiller.Contracts",
+    "lang": 0,
+    "autoCodeGen": true,
+    "projectPath": "./Web/ZKiller.Contracts"
+}

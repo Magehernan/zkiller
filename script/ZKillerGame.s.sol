@@ -2,17 +2,17 @@
 pragma solidity ^0.8.13;
 
 import {Script, console} from "forge-std/Script.sol";
-import {Counter} from "../src/Counter.sol";
+import {ZKillerGame} from "../src/ZKillerGame.sol";
 
 contract CounterScript is Script {
-    Counter public counter;
+    ZKillerGame public counter;
 
     function setUp() public {}
 
     function run() public {
         vm.startBroadcast();
 
-        counter = new Counter();
+        counter = new ZKillerGame();
 
         vm.stopBroadcast();
     }
