@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Nethereum.Metamask.Blazor" Version="4.21.2" />
+    <PackageReference Include="Nethereum.UI" Version="4.21.2" />
+    <PackageReference Include="Nethereum.Web3" Version="4.21.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\ZKiller.Contracts\ZKiller.Contracts.csproj" />
+  </ItemGroup>
+
+</Project>
