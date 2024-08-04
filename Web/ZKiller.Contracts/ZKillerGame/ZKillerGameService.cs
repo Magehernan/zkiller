@@ -61,6 +61,20 @@ namespace ZKiller.Contracts.ZKillerGame
             return ContractHandler.QueryDeserializingToObjectAsync<GamesFunction, GamesOutputDTO>(gamesFunction, blockParameter);
         }
 
+        public Task<List<string>> GetAlivePlayersQueryAsync(GetAlivePlayersFunction getAlivePlayersFunction, BlockParameter blockParameter = null)
+        {
+            return ContractHandler.QueryAsync<GetAlivePlayersFunction, List<string>>(getAlivePlayersFunction, blockParameter);
+        }
+
+        
+        public Task<List<string>> GetAlivePlayersQueryAsync(BigInteger gameIndex, BlockParameter blockParameter = null)
+        {
+            var getAlivePlayersFunction = new GetAlivePlayersFunction();
+                getAlivePlayersFunction.GameIndex = gameIndex;
+            
+            return ContractHandler.QueryAsync<GetAlivePlayersFunction, List<string>>(getAlivePlayersFunction, blockParameter);
+        }
+
         public Task<List<string>> GetPlayersQueryAsync(GetPlayersFunction getPlayersFunction, BlockParameter blockParameter = null)
         {
             return ContractHandler.QueryAsync<GetPlayersFunction, List<string>>(getPlayersFunction, blockParameter);

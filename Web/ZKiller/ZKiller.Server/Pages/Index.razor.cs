@@ -21,8 +21,7 @@ public partial class Index {
 
 	private Game? currentGame;
 
-	private const string contractAddress = "0x2354C0ca250D8E461781a523B4043a71d482b55C"; //scroll
-																						 //private const string contractAddress = "0xA1e4CEaa9924e42680b3d6a4658eB637d4B42DA7"; //geth
+	private const string contractAddress = "0x9F17dA808913A45a9A4C5d3fbb893bF306AEC570";   //scroll
 
 	protected override async Task OnInitializedAsync() {
 		await base.OnInitializedAsync();
@@ -57,8 +56,9 @@ public partial class Index {
 			List<string> players = [
 				"0xedD31e732EA38E95f0637634FE1EBb3Ca5055979",
 				"0x12e1079ECEBB9e96ACaB873e5F2B788E805d4C41",
-				//"0x666192B083e809C832F88EAf24120f7188AE77B8",
-				"0xD16B43DB0F469A5CE11dbfDc133238e51390407c",
+				"0x666192B083e809C832F88EAf24120f7188AE77B8",
+				//"0xD16B43DB0F469A5CE11dbfDc133238e51390407c",
+				"0xCF204a8C2b73ae5E2B8E761290B1b74ea8407333",
 			];
 
 			TransactionReceipt receipt = await zkillerGameService
@@ -70,5 +70,9 @@ public partial class Index {
 
 	private void PlayGame(Game game) {
 		currentGame = game;
+	}
+
+	private void ExitGame() {
+		currentGame = null;
 	}
 }

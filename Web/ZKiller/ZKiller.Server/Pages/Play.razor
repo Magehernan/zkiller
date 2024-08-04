@@ -5,39 +5,69 @@
 	<div>
 		Turn @CurrentGame.Turn
 	</div>
-	<div>
-		Status @CurrentGame.Status
-	</div>
 </div>
 
-<div style="display: flex; flex-direction: column; gap: 1rem;">
-	@if (CurrentGame.Status == 0)
+@if (CurrentGame.Status == 0)
+{
+	@if (alreadyVote)
 	{
-		@if (alreadyVote)
+		<div>Waiting for turn end</div>
+	}
+	else if (alivePlayers is not null)
+	{
+		if (!IAmPlayer(alivePlayers))
 		{
-			<div>Waiting for turn end</div>
+			<div>
+				<img src="res/img_victim/1.jpg" />
+				Your are dead
+			</div>
 		}
 		else
 		{
-			@if (players is not null)
-			{
-				@foreach (var player in players)
+			<div style="display: flex; flex-direction: column; gap: 1rem;">
+				@foreach (var player in alivePlayers)
 				{
 					@if (!IsPlayerAddress(player))
 					{
-						<Button OnClick="_ => VoteAsync(player)">@(IsPlayerKiller() ? "Kill" : "Vote") @player</Button>
+						<Button OnClick="_ => VoteAsync(player)" Style="height: 50px">
+							@if (IsPlayerKiller())
+							{
+								<img src="res/img_killer/logozkiller.png" width="30" />
+							}
+							else
+							{
+								<img src="res/img_victim/señala.png" width="30" />
+							}
+							@player
+						</Button>
 					}
 				}
-			}
+			</div>
 		}
 	}
-	else if (CurrentGame.Status == 1)
+
+}
+else if (CurrentGame.Status == 1)
+{
+	@if (IsPlayerKiller())
 	{
-		<div>People Win</div>
+		<div class="match-end lost">Your lost</div>
 	}
 	else
 	{
-		<div>ZKiller Win</div>
+
+		<div class="match-end win">People Win</div>
 	}
-</div>
+}
+else
+{
+	@if (IsPlayerKiller())
+	{
+		<div class="match-end win">You Win</div>
+	}
+	else
+	{
+		<div class="match-end lost">ZKiller Win</div>
+	}
+}
 

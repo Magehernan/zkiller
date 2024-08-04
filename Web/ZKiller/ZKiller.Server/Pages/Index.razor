@@ -7,7 +7,7 @@
 			<img src="res/present_alargado.jpg" style="width: 1300px" />
 			<br />
 			<br />
-			<Button Type="primary" OnClick="NewGameAsync">NEW GAME!</Button>
+			<Button Type="primary" OnClick="NewGameAsync">New Game</Button>
 		</div>
 
 		<div align="center" style="margin: 3rem;">
@@ -18,16 +18,14 @@
 		</div>
 		@if (currentGame is not null)
 		{
-			<Play Contract="zkillerGameService" Game="currentGame"></Play>
+			<Play Contract="zkillerGameService" Game="currentGame" Exit="ExitGame"></Play>
 		}
 	</Authorized>
 	<NotAuthorized>
 
 		<div align="center">
 			<img src="res/logozkiller.png" style="max-width:300px; height: auto;" />
-			<h2>¿Ready to play? Connect to Scroll!.</h2>
-			<br />
-			<Button Type="primary">LOGIN!</Button>
+			<h2>¿Ready to play? Connect to Scroll!</h2>
 		</div>
 
 	</NotAuthorized>
@@ -38,6 +36,6 @@
 <div align="center">
 	<br />
 	<br />
-	<img src="res/lpoweredByScroll.jpg" style="max-width: 250px; height: auto;" />
+	<img src="res/lpoweredByScroll.png" style="max-width: 250px; height: auto;" />
 </div>
 

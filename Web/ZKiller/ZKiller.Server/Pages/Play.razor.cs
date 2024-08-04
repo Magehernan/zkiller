@@ -15,6 +15,9 @@ public partial class Play {
 
 	[Parameter, EditorRequired]
 	public required Game Game { get; set; }
+	[Parameter, EditorRequired]
+	public required EventCallback Exit { get; set; }
+
 
 	[Inject]
 	private SelectedEthereumHostProviderService SelectedHostProviderService { get; set; } = default!;
@@ -23,6 +26,7 @@ public partial class Play {
 
 	private GamesOutputDTO CurrentGame => Game.Info;
 
+	private List<string>? alivePlayers;
 	private List<string>? players;
 	private bool alreadyVote = false;
 
@@ -31,9 +35,16 @@ public partial class Play {
 		await base.SetParametersAsync(parameters);
 		if (hasChanges) {
 			await LoadAsync();
+			players = await Contract.GetPlayersQueryAsync(Game.Id);
+			if (!IAmPlayer(players)) {
+				ModalService.Error(new ConfirmOptions() {
+					Title = "Sorry",
+					Content = "you are not a player or the Zkiller already kill you"
+				});
+				await Exit.InvokeAsync();
+			}
 		}
 	}
-
 
 	private async Task LoadAsync() {
 		Game = new(Game.Id, await Contract.GamesQueryAsync(Game.Id));
@@ -49,18 +60,11 @@ public partial class Play {
 			_ = LoadAsync();
 			return;
 		}
-		players = await Contract.GetPlayersQueryAsync(Game.Id);	
-
-		if (!IAmPlaying(players)) {
-			ModalService.Error(new ConfirmOptions() {
-				Title = "Sorry",
-				Content = "you are not a player or the Zkiller already kill you"
-			});
-		}
+		alivePlayers = await Contract.GetAlivePlayersQueryAsync(Game.Id);
 		await InvokeAsync(StateHasChanged);
 	}
 
-	private bool IAmPlaying(List<string> players) {
+	private bool IAmPlayer(List<string> players) {
 		foreach (string player in players) {
 			if (IsPlayerAddress(player)) { return true; }
 		}
@@ -79,6 +83,7 @@ public partial class Play {
 		try {
 			await Contract.VoteRequestAndWaitForReceiptAsync(Game.Id, player);
 		} catch { }
+		await Task.Delay(5000);
 		await LoadAsync();
 	}
 }
