@@ -1,38 +1,48 @@
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Authorization;
+using Nethereum.BlockchainProcessing.BlockStorage.Entities.Mapping;
 using Nethereum.Hex.HexTypes;
 using Nethereum.UI;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using ZKiller.Contracts.ZKillerGame;
+using ZKiller.Contracts.ZKillerGame.ContractDefinition;
 
 namespace ZKiller.Server.Pages;
-public partial class Index {
-	[CascadingParameter]
-	public Task<AuthenticationState> AuthenticationState { get; set; }
+public record Game(int Id, GamesOutputDTO Info);
 
-	private bool EthereumAvailable { get; set; }
-	private string SelectedAccount { get; set; }
-	private long SelectedChainId { get; set; }
+public partial class Index : IDisposable {
+	[Inject]
+	private SelectedEthereumHostProviderService SelectedHostProviderService { get; set; } = default!;
 
-	private IEthereumHostProvider ethereumHostProvider;
-	private ZKillerGameService zkillerGameService;
+
+	private IEthereumHostProvider ethereumHostProvider = default!;
+	private ZKillerGameService zkillerGameService = default!;
+	private readonly List<Game> games = [];
+
+	private Game? currentGame;
+	private long selectedNetwork;
 
 	protected override async Task OnInitializedAsync() {
 		await base.OnInitializedAsync();
-		ethereumHostProvider = selectedHostProviderService.SelectedHost;
-		ethereumHostProvider.SelectedAccountChanged += HostProvider_SelectedAccountChanged;
-		ethereumHostProvider.NetworkChanged += HostProvider_NetworkChanged;
+		ethereumHostProvider = SelectedHostProviderService.SelectedHost;
 		ethereumHostProvider.EnabledChanged += HostProviderOnEnabledChanged;
-		zkillerGameService = new(await ethereumHostProvider.GetWeb3Async(), "0xF7c9589564990ca244DEAD198db3Db1A310E8225");
+		ethereumHostProvider.NetworkChanged += NetworkChanged;
+		//scroll zkillerGameService = new(await ethereumHostProvider.GetWeb3Async(), "0x2354C0ca250D8E461781a523B4043a71d482b55C");
+		zkillerGameService = new(await ethereumHostProvider.GetWeb3Async(), "0xA1e4CEaa9924e42680b3d6a4658eB637d4B42DA7");
 	}
 
 	public void Dispose() {
-		ethereumHostProvider.SelectedAccountChanged -= HostProvider_SelectedAccountChanged;
-		ethereumHostProvider.NetworkChanged -= HostProvider_NetworkChanged;
 		ethereumHostProvider.EnabledChanged -= HostProviderOnEnabledChanged;
+		ethereumHostProvider.NetworkChanged -= NetworkChanged;
 
 		GC.SuppressFinalize(this);
+	}
+
+	private Task NetworkChanged(long arg) {
+		selectedNetwork = arg;
+		StateHasChanged();
+		return Task.CompletedTask;
 	}
 
 	protected override async Task OnAfterRenderAsync(bool firstTime) {
@@ -40,13 +50,23 @@ public partial class Index {
 			return;
 		}
 
-		EthereumAvailable = await ethereumHostProvider.CheckProviderAvailabilityAsync();
 
-		if (EthereumAvailable) {
-			SelectedAccount = await ethereumHostProvider.GetProviderSelectedAccountAsync();
-			await GetChainId();
+		await GetChainId();
+
+		await LoadGamesAsync();
+	}
+
+	private async Task LoadGamesAsync() {
+		System.Numerics.BigInteger lastGame = await zkillerGameService.LastGameQueryAsync();
+		int from = (int)lastGame;
+		games.Clear();
+		for (int i = from; i > 0; i--) {
+			GamesOutputDTO game = await zkillerGameService.GamesQueryAsync(i);
+			if (game.Status > 0) {
+				continue;
+			}
+			games.Add(new(i, game));
 		}
-
 		StateHasChanged();
 	}
 
@@ -60,19 +80,8 @@ public partial class Index {
 	private async Task GetChainId() {
 		Nethereum.Web3.IWeb3 web3 = await ethereumHostProvider.GetWeb3Async();
 		HexBigInteger chainId = await web3.Eth.ChainId.SendRequestAsync();
-		SelectedChainId = (int)chainId.Value;
-	}
-
-	private async Task HostProvider_SelectedAccountChanged(string account) {
-		SelectedAccount = account;
-		await GetChainId();
+		selectedNetwork = chainId.ToLong();
 		StateHasChanged();
-	}
-
-	private Task HostProvider_NetworkChanged(long chainId) {
-		SelectedChainId = chainId;
-		StateHasChanged();
-		return Task.CompletedTask;
 	}
 
 	private async Task NewGameAsync() {
@@ -83,6 +92,11 @@ public partial class Index {
 					"0x12e1079ECEBB9e96ACaB873e5F2B788E805d4C41",
 					"0x666192B083e809C832F88EAf24120f7188AE77B8"
 				], "0xedD31e732EA38E95f0637634FE1EBb3Ca5055979");
+			await LoadGamesAsync();
 		} catch { }
+	}
+
+	private void PlayGame(Game game) {
+		currentGame = game;
 	}
 }

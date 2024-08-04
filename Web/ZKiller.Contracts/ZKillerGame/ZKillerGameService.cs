@@ -28,7 +28,7 @@ namespace ZKiller.Contracts.ZKillerGame
 
         public static async Task<ZKillerGameService> DeployContractAndGetServiceAsync(Nethereum.Web3.Web3 web3, ZKillerGameDeployment zKillerGameDeployment, CancellationTokenSource cancellationTokenSource = null)
         {
-			TransactionReceipt receipt = await DeployContractAndWaitForReceiptAsync(web3, zKillerGameDeployment, cancellationTokenSource);
+            var receipt = await DeployContractAndWaitForReceiptAsync(web3, zKillerGameDeployment, cancellationTokenSource);
             return new ZKillerGameService(web3, receipt.ContractAddress);
         }
 
@@ -55,7 +55,7 @@ namespace ZKiller.Contracts.ZKillerGame
 
         public Task<GamesOutputDTO> GamesQueryAsync(BigInteger returnValue1, BlockParameter blockParameter = null)
         {
-			GamesFunction gamesFunction = new GamesFunction();
+            var gamesFunction = new GamesFunction();
                 gamesFunction.ReturnValue1 = returnValue1;
             
             return ContractHandler.QueryDeserializingToObjectAsync<GamesFunction, GamesOutputDTO>(gamesFunction, blockParameter);
@@ -69,7 +69,7 @@ namespace ZKiller.Contracts.ZKillerGame
         
         public Task<List<string>> GetPlayersQueryAsync(BigInteger gameIndex, BlockParameter blockParameter = null)
         {
-			GetPlayersFunction getPlayersFunction = new GetPlayersFunction();
+            var getPlayersFunction = new GetPlayersFunction();
                 getPlayersFunction.GameIndex = gameIndex;
             
             return ContractHandler.QueryAsync<GetPlayersFunction, List<string>>(getPlayersFunction, blockParameter);
@@ -98,7 +98,7 @@ namespace ZKiller.Contracts.ZKillerGame
 
         public Task<string> NewGameRequestAsync(List<string> players, string killer)
         {
-			NewGameFunction newGameFunction = new NewGameFunction();
+            var newGameFunction = new NewGameFunction();
                 newGameFunction.Players = players;
                 newGameFunction.Killer = killer;
             
@@ -107,11 +107,27 @@ namespace ZKiller.Contracts.ZKillerGame
 
         public Task<TransactionReceipt> NewGameRequestAndWaitForReceiptAsync(List<string> players, string killer, CancellationTokenSource cancellationToken = null)
         {
-			NewGameFunction newGameFunction = new NewGameFunction();
+            var newGameFunction = new NewGameFunction();
                 newGameFunction.Players = players;
                 newGameFunction.Killer = killer;
             
              return ContractHandler.SendRequestAndWaitForReceiptAsync(newGameFunction, cancellationToken);
+        }
+
+        public Task<bool> PlayerTurnVoteQueryAsync(PlayerTurnVoteFunction playerTurnVoteFunction, BlockParameter blockParameter = null)
+        {
+            return ContractHandler.QueryAsync<PlayerTurnVoteFunction, bool>(playerTurnVoteFunction, blockParameter);
+        }
+
+        
+        public Task<bool> PlayerTurnVoteQueryAsync(BigInteger gameIndex, BigInteger turn, string player, BlockParameter blockParameter = null)
+        {
+            var playerTurnVoteFunction = new PlayerTurnVoteFunction();
+                playerTurnVoteFunction.GameIndex = gameIndex;
+                playerTurnVoteFunction.Turn = turn;
+                playerTurnVoteFunction.Player = player;
+            
+            return ContractHandler.QueryAsync<PlayerTurnVoteFunction, bool>(playerTurnVoteFunction, blockParameter);
         }
 
         public Task<string> VoteRequestAsync(VoteFunction voteFunction)
@@ -126,7 +142,7 @@ namespace ZKiller.Contracts.ZKillerGame
 
         public Task<string> VoteRequestAsync(BigInteger gameIndex, string target)
         {
-			VoteFunction voteFunction = new VoteFunction();
+            var voteFunction = new VoteFunction();
                 voteFunction.GameIndex = gameIndex;
                 voteFunction.Target = target;
             
@@ -135,7 +151,7 @@ namespace ZKiller.Contracts.ZKillerGame
 
         public Task<TransactionReceipt> VoteRequestAndWaitForReceiptAsync(BigInteger gameIndex, string target, CancellationTokenSource cancellationToken = null)
         {
-			VoteFunction voteFunction = new VoteFunction();
+            var voteFunction = new VoteFunction();
                 voteFunction.GameIndex = gameIndex;
                 voteFunction.Target = target;
             

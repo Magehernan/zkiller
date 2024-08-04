@@ -2,9 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AntDesign" Version="0.19.7" />
     <PackageReference Include="Nethereum.Metamask.Blazor" Version="4.21.2" />
     <PackageReference Include="Nethereum.UI" Version="4.21.2" />
     <PackageReference Include="Nethereum.Web3" Version="4.21.2" />

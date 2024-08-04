@@ -26,15 +26,15 @@ namespace ZKiller.Server {
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
+			services.AddAntDesign();
 
-
-            services.AddScoped<IMetamaskInterop, MetamaskBlazorInterop>();
+			services.AddScoped<IMetamaskInterop, MetamaskBlazorInterop>();
             services.AddScoped<MetamaskHostProvider>();
             //Add metamask as the selected ethereum host provider
             services.AddScoped(services =>
             {
-				MetamaskHostProvider metamaskHostProvider = services.GetService<MetamaskHostProvider>();
-				SelectedEthereumHostProviderService selectedHostProvider = new SelectedEthereumHostProviderService();
+				MetamaskHostProvider? metamaskHostProvider = services.GetService<MetamaskHostProvider>();
+				SelectedEthereumHostProviderService selectedHostProvider = new();
                 selectedHostProvider.SetSelectedEthereumHostProvider(metamaskHostProvider);
                 return selectedHostProvider;
             });

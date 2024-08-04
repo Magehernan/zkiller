@@ -26,6 +26,10 @@ contract ZKillerGame {
         return games[gameIndex].players;
     }
 
+    function playerTurnVote(uint256 gameIndex, uint256 turn, address player) external view returns (bool) {
+        return gameTurnVoted[gameIndex][turn][player];
+    }
+
     function newGame(address[] calldata players, address killer) external {
         lastGame++;
         games[lastGame] =
@@ -62,16 +66,19 @@ contract ZKillerGame {
     function endTurn(uint256 gameIndex, GameData storage gameData) private {
         uint256 maxIndex = 0;
         uint256 maxVote = 0;
+        bool tie = false;
 
         for (uint256 i = 0; i < gameData.players.length; i++) {
-            if (gameTurnVoteCount[gameIndex][gameData.turn][gameData.players[i]] > maxVote) {
+            uint256 votes = gameTurnVoteCount[gameIndex][gameData.turn][gameData.players[i]];
+            if (votes >= maxVote) {
+                tie = votes == maxVote;
                 maxIndex = i;
-                maxVote = gameTurnVoteCount[gameIndex][gameData.turn][gameData.players[i]];
+                maxVote = votes;
             }
         }
 
         address playerSelected = gameData.players[maxIndex];
-        if (playerSelected == gameData.killer) {
+        if (!tie && playerSelected == gameData.killer) {
             gameData.status = GameStatus.PeopleWin;
             return;
         }
