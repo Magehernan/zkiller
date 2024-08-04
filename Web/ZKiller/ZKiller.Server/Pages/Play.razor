@@ -1,9 +1,17 @@
-﻿Game @Game.Id
-Turn @Game.Info.Turn
-Status @Game.Info.Status
+﻿<div>
+	<div>
+		Playing Game @Game.Id
+	</div>
+	<div>
+		Turn @CurrentGame.Turn
+	</div>
+	<div>
+		Status @CurrentGame.Status
+	</div>
+</div>
 
 <div style="display: flex; flex-direction: column; gap: 1rem;">
-	@if (Game.Info.Status == 0)
+	@if (CurrentGame.Status == 0)
 	{
 		@if (alreadyVote)
 		{
@@ -17,17 +25,17 @@ Status @Game.Info.Status
 				{
 					@if (!IsPlayerAddress(player))
 					{
-						<Image Src="res/logozkiller.png" />
-						<Button OnClick="_ => VoteAsync(player)">Vote @player</Button>
+						<Button OnClick="_ => VoteAsync(player)">@(IsPlayerKiller() ? "Kill" : "Vote") @player</Button>
 					}
 				}
 			}
 		}
 	}
-	else if (Game.Info.Status == 1)
+	else if (CurrentGame.Status == 1)
 	{
 		<div>People Win</div>
-	} else
+	}
+	else
 	{
 		<div>ZKiller Win</div>
 	}

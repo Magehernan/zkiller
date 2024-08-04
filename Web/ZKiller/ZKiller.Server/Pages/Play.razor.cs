@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using ZKiller.Contracts.ZKillerGame;
+using ZKiller.Contracts.ZKillerGame.ContractDefinition;
 
 namespace ZKiller.Server.Pages;
 public partial class Play {
@@ -20,6 +21,8 @@ public partial class Play {
 	[Inject]
 	private ModalService ModalService { get; set; } = default!;
 
+	private GamesOutputDTO CurrentGame => Game.Info;
+
 	private List<string>? players;
 	private bool alreadyVote = false;
 
@@ -31,10 +34,16 @@ public partial class Play {
 		}
 	}
 
+
 	private async Task LoadAsync() {
 		Game = new(Game.Id, await Contract.GamesQueryAsync(Game.Id));
 		alreadyVote = await Contract.PlayerTurnVoteQueryAsync(Game.Id, Game.Info.Turn, SelectedHostProviderService.SelectedHost.SelectedAccount);
 		await InvokeAsync(StateHasChanged);
+
+		if (Game.Info.Status != 0) {
+			return;
+		}
+
 		if (alreadyVote) {
 			await Task.Delay(2000);
 			_ = LoadAsync();
@@ -48,6 +57,7 @@ public partial class Play {
 				Content = "you are not a player or the Zkiller already kill you"
 			});
 		}
+		await InvokeAsync(StateHasChanged);
 	}
 
 	private bool IAmPlaying(List<string> players) {
@@ -59,6 +69,10 @@ public partial class Play {
 
 	private bool IsPlayerAddress(string player) {
 		return player.Equals(SelectedHostProviderService.SelectedHost.SelectedAccount, StringComparison.OrdinalIgnoreCase);
+	}
+
+	private bool IsPlayerKiller() {
+		return CurrentGame.Killer.Equals(SelectedHostProviderService.SelectedHost.SelectedAccount, StringComparison.OrdinalIgnoreCase);
 	}
 
 	private async Task VoteAsync(string player) {

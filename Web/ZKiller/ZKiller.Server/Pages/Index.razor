@@ -4,21 +4,18 @@
 <AuthorizeView Roles="EthereumConnected">
 	<Authorized>
 		<div align="center">
+			<img src="res/present_alargado.jpg" style="width: 1300px" />
 			<br />
-			<img src="res/present_alargado.jpg" style="height: auto;" />
 			<br />
-			<br />
-			<h2>There is not game yet! </h2>
+			<Button Type="primary" OnClick="NewGameAsync">NEW GAME!</Button>
 		</div>
-		<Button Type="primary" OnClick="NewGameAsync">NEW GAME!</Button>
 
-		@foreach (var game in games)
-		{
-			<div align="center">
-				<br />
+		<div align="center" style="margin: 3rem;">
+			@foreach (var game in games)
+			{
 				<Button Type="primary" OnClick="_ => PlayGame(game)">Play Game @game.Id</Button>
-			</div>
-		}
+			}
+		</div>
 		@if (currentGame is not null)
 		{
 			<Play Contract="zkillerGameService" Game="currentGame"></Play>
@@ -30,7 +27,7 @@
 			<img src="res/logozkiller.png" style="max-width:300px; height: auto;" />
 			<h2>¿Ready to play? Connect to Scroll!.</h2>
 			<br />
-			<Button Type="primary" >LOGIN!</Button>
+			<Button Type="primary">LOGIN!</Button>
 		</div>
 
 	</NotAuthorized>
