@@ -22,3 +22,12 @@ Basado en el popular juego de llamado Mafia, **ZKiller** sucede en la blockchain
 ```shell
 $ 0x9F17dA808913A45a9A4C5d3fbb893bF306AEC570
 ```
+
+
+## Desarrollo
+
+El contrato del juego fue desarrollado con foundry, hay un test para probar cosas minimas.
+
+La web para interactuar con el contrato fue desarrollada con .net y tecnologica Blazor.
+
+Para poder ejecutar esto se puede instalar el visual studio 2022 community, abrira la solucion dentro de la carpeta Web/Zkiller.
