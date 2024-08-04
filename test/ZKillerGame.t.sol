@@ -51,7 +51,7 @@ contract ZKillerGameTest is Test {
         zkgame.vote(1, bob);
         vm.startPrank(bob);
         zkgame.vote(1, alice);
-        assertEq(2, zkgame.getPlayers(1).length);
+        assertEq(2, zkgame.getAlivePlayers(1).length);
         (uint8 turn,,, GameStatus status) = zkgame.games(1);
         assertEq(turn, 1);
         assertEq(uint256(status), uint256(GameStatus.KillerWin));
