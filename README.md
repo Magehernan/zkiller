@@ -10,7 +10,7 @@ Basado en el popular juego de llamado Mafia, **ZKiller** sucede en la blockchain
 
 > Privacy
 
-## Bounty
+### Bounty
 
 > General
 
