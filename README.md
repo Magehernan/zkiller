@@ -19,6 +19,9 @@ Basado en el popular juego de llamado Mafia, **ZKiller** sucede en la blockchain
 
 ## Direcciones de contratos verificados
 
+```shell
+$ contrato
+```
 
 
 ## Documentation
