@@ -1,4 +1,5 @@
 ## Descripción general del proyecto
+> Based on the populary card game called Mafia, zkiller happens on the blockchain. Are you going to discover who killed your work friends or survive among falses complaint?
 
 
 ## Track
@@ -6,11 +7,15 @@
 
 ## Bounty
 
+> General
+
 ## Instrucciones de instalación y ejecución
+
+>
 
 ## Direcciones de contratos verificados
 
-
+>
 
 
 ## Foundry
