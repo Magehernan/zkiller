@@ -12,6 +12,7 @@ struct GameData {
     address killer;
     address killerTarget;
     address[] players;
+    address[] alive;
     GameStatus status;
 }
 
@@ -26,6 +27,10 @@ contract ZKillerGame {
         return games[gameIndex].players;
     }
 
+    function getAlivePlayers(uint256 gameIndex) external view returns (address[] memory players) {
+        return games[gameIndex].alive;
+    }
+
     function playerTurnVote(uint256 gameIndex, uint256 turn, address player) external view returns (bool) {
         return gameTurnVoted[gameIndex][turn][player];
     }
@@ -33,13 +38,13 @@ contract ZKillerGame {
     function newGame(address[] calldata players, address killer) external {
         lastGame++;
         games[lastGame] =
-            GameData({turn: 1, players: players, killer: killer, killerTarget: address(0), status: GameStatus.Playing});
+            GameData({turn: 1, players: players, alive: players, killer: killer, killerTarget: address(0), status: GameStatus.Playing});
     }
 
     function vote(uint256 gameIndex, address target) external {
         require(msg.sender != target);
-        require(isPlayer(gameIndex, msg.sender), "not a active player");
-        require(isPlayer(gameIndex, target), "not a player");
+        require(isPlayerAlive(gameIndex, msg.sender), "not a active player");
+        require(isPlayerAlive(gameIndex, target), "not a player");
 
         GameData storage gameData = games[gameIndex];
 
@@ -54,8 +59,8 @@ contract ZKillerGame {
             gameData.killerTarget = target;
         }
 
-        for (uint256 i = 0; i < gameData.players.length; i++) {
-            if (!gameTurnVoted[gameIndex][gameData.turn][gameData.players[i]]) {
+        for (uint256 i = 0; i < gameData.alive.length; i++) {
+            if (!gameTurnVoted[gameIndex][gameData.turn][gameData.alive[i]]) {
                 return;
             }
         }
@@ -68,8 +73,8 @@ contract ZKillerGame {
         uint256 maxVote = 0;
         bool tie = false;
 
-        for (uint256 i = 0; i < gameData.players.length; i++) {
-            uint256 votes = gameTurnVoteCount[gameIndex][gameData.turn][gameData.players[i]];
+        for (uint256 i = 0; i < gameData.alive.length; i++) {
+            uint256 votes = gameTurnVoteCount[gameIndex][gameData.turn][gameData.alive[i]];
             if (votes >= maxVote) {
                 tie = votes == maxVote;
                 maxIndex = i;
@@ -77,21 +82,21 @@ contract ZKillerGame {
             }
         }
 
-        address playerSelected = gameData.players[maxIndex];
+        address playerSelected = gameData.alive[maxIndex];
         if (!tie && playerSelected == gameData.killer) {
             gameData.status = GameStatus.PeopleWin;
             return;
         }
 
-        for (uint256 i = 0; i < gameData.players.length; i++) {
-            if (gameData.players[i] == gameData.killerTarget) {
-                gameData.players[i] = gameData.players[gameData.players.length - 1];
-                gameData.players.pop();
+        for (uint256 i = 0; i < gameData.alive.length; i++) {
+            if (gameData.alive[i] == gameData.killerTarget) {
+                gameData.alive[i] = gameData.alive[gameData.alive.length - 1];
+                gameData.alive.pop();
                 break;
             }
         }
 
-        if (gameData.players.length == 2) {
+        if (gameData.alive.length == 2) {
             gameData.status = GameStatus.KillerWin;
             return;
         }
@@ -99,10 +104,10 @@ contract ZKillerGame {
         gameData.turn++;
     }
 
-    function isPlayer(uint256 gameIndex, address player) private view returns (bool) {
+    function isPlayerAlive(uint256 gameIndex, address player) private view returns (bool) {
         GameData memory gameData = games[gameIndex];
-        for (uint256 i = 0; i < gameData.players.length; i++) {
-            if (gameData.players[i] == player) {
+        for (uint256 i = 0; i < gameData.alive.length; i++) {
+            if (gameData.alive[i] == player) {
                 return true;
             }
         }
