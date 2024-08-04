@@ -15,10 +15,6 @@ https://www.youtube.com/watch?v=h0Q-F2uKh_g
 
 > General
 
-## Instrucciones de instalación y ejecución
-
-
-
 ## Direcciones de contratos verificados
 
 ```shell
