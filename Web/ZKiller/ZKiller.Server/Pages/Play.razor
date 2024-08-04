@@ -17,6 +17,7 @@ Status @Game.Info.Status
 				{
 					@if (!IsPlayerAddress(player))
 					{
+						<Image Src="res/logozkiller.png" />
 						<Button OnClick="_ => VoteAsync(player)">Vote @player</Button>
 					}
 				}

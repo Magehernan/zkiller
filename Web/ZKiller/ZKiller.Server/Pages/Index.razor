@@ -1,6 +1,11 @@
 ﻿@page "/"
 
-@selectedNetwork
+
+
+
+<div align="center">
+	<img src="res/logozkiller.png" style="max-width: 200px; height: auto;" />
+</div>
 
 <AuthorizeView Roles="EthereumConnected">
 	<Authorized>
@@ -8,6 +13,7 @@
 		<Button Type="primary" OnClick="NewGameAsync">New Game</Button>
 		@foreach (var game in games)
 		{
+			
 			<Button Type="primary" OnClick="_ => PlayGame(game)">Play Game @game.Id</Button>
 		}
 		@if (currentGame is not null)
@@ -17,9 +23,6 @@
 	</Authorized>
 	<NotAuthorized>
 
-		<div>
-			Please connect to Ethereum !
-		</div>
 
 	</NotAuthorized>
 </AuthorizeView>
